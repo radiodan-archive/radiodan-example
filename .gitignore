@@ -1,0 +1,4 @@
+*.swp
+tmp/*
+.vagrant
+db/*.sqlite3
