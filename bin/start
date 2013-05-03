@@ -2,8 +2,12 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'radiodan'
+require 'sinatra/async'
+require 'thin'
 
-require './lib/download_bbc_radio'
+$:<< './lib'
+require 'download_bbc_radio'
+require 'web_server'
 
 root = File.join(File.dirname(__FILE__), '..')
 
@@ -23,4 +27,6 @@ EM.synchrony do
   end
 
   radio.start
+
+  Thin::Server.start WebServer.new(radio.player), '0.0.0.0', 3000, :signals => false
 end
