@@ -1,15 +1,3 @@
-GIT
-  remote: git://github.com/pixelblend/radiodan.git
-  revision: 2485521750c9b379df95d23065b06a63ff3f998b
-  branch: middleware
-  specs:
-    radiodan (0.0.1)
-      active_support (~> 3.0.0)
-      em-http-request (~> 1.0.3)
-      em-simple_telnet (~> 0.0.6)
-      em-synchrony (~> 1.0.3)
-      eventmachine (~> 1.0.3)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -49,6 +37,12 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
+    radiodan (0.0.1)
+      active_support (~> 3.0.0)
+      em-http-request (~> 1.0.3)
+      em-simple_telnet (~> 0.0.6)
+      em-synchrony (~> 1.0.3)
+      eventmachine (~> 1.0.3)
     slop (3.4.4)
     vagrant (1.0.7)
       archive-tar-minitar (= 0.5.2)
@@ -64,9 +58,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  em-http-request (~> 1.0.3)
-  em-synchrony (~> 1.0.3)
-  eventmachine (~> 1.0.3)
   pry
-  radiodan!
+  radiodan
   vagrant (~> 1.0.0)
