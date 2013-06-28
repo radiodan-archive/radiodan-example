@@ -1,3 +1,14 @@
+GIT
+  remote: git://github.com/pixelblend/radiodan.git
+  revision: 8aad2249a79a457839efb70de1f9bfce8fe10c8c
+  specs:
+    radiodan (0.0.1)
+      active_support (~> 3.0.0)
+      em-http-request (~> 1.0.3)
+      em-simple_telnet (~> 0.0.6)
+      em-synchrony (~> 1.0.3)
+      eventmachine (~> 1.0.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -44,12 +55,6 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
-    radiodan (0.0.1)
-      active_support (~> 3.0.0)
-      em-http-request (~> 1.0.3)
-      em-simple_telnet (~> 0.0.6)
-      em-synchrony (~> 1.0.3)
-      eventmachine (~> 1.0.3)
     sinatra (1.4.2)
       rack (~> 1.5, >= 1.5.2)
       rack-protection (~> 1.4)
@@ -76,7 +81,7 @@ PLATFORMS
 DEPENDENCIES
   async_sinatra (~> 1.1.0)
   pry
-  radiodan
+  radiodan!
   sinatra (~> 1.4.2)
   thin
   vagrant (~> 1.0.0)

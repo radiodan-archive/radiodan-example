@@ -5,7 +5,7 @@ group :development do
   gem 'pry'
 end
 
-gem 'radiodan'
+gem 'radiodan', :git => 'git://github.com/pixelblend/radiodan.git'
 
 group :web do
   gem 'thin'
