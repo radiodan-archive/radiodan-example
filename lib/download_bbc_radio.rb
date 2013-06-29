@@ -21,7 +21,6 @@ class DownloadBBCRadio
     @stations ||= Hash.new
     
     STATIONS.each do |station|
-      puts "requesting #{station}"
       req = EM::HttpRequest.new(URL % station).get
       next if req.response_header.status != 200
 
