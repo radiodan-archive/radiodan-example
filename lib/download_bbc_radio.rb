@@ -9,6 +9,7 @@ download the playlist again to continue.
 This downloads the playlists and parses for the audio end point.
 =end
 
+require "radiodan/playlist"
 require "em-synchrony/em-http"
 
 class DownloadBBCRadio
@@ -20,6 +21,7 @@ class DownloadBBCRadio
     @stations ||= Hash.new
     
     STATIONS.each do |station|
+      puts "requesting #{station}"
       req = EM::HttpRequest.new(URL % station).get
       next if req.response_header.status != 200
 
@@ -27,7 +29,7 @@ class DownloadBBCRadio
 
       station_name = "bbc_radio_#{station}"
 
-      content = Radiodan::Content.new 'playlist', station, Array(url)
+      content = Radiodan::Playlist.new tracks: url
       @stations[station_name] = content
     end
   end
