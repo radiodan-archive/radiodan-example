@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 group :development do
-  gem 'vagrant', '~> 1.0.0'
   gem 'pry'
 end
 
@@ -11,5 +10,6 @@ group :web do
   gem 'thin'
   gem 'sinatra', '~> 1.4.2'
   gem 'async_sinatra', '~> 1.1.0'
+  gem 'rest-client'
 end
 
