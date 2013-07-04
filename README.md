@@ -6,7 +6,6 @@ Example application using the radiodan gem
 ## Getting started
 
 - Download and install [Vagrant](http://downloads.vagrantup.com/)
-- `$ vagrant box add precise64-audio /path/to/precise64-audio.box`
 - `$ vagrant up`
 - Shell into the virtual machine `$ vagrant ssh`
 - Change to the application directory, mounted as `$ cd /vagrant`
