@@ -10,7 +10,7 @@ This downloads the playlists and parses for the audio end point.
 =end
 
 require "radiodan/playlist"
-require "em-synchrony/em-http"
+require "rest-client"
 
 class DownloadBBCRadio
   URL = "http://www.bbc.co.uk/radio/listen/live/r%s_aaclca.pls"
@@ -19,17 +19,25 @@ class DownloadBBCRadio
 
   def run
     @stations ||= Hash.new
+    @threads = []
     
+    RestClient.proxy = ENV['HTTP_PROXY']
+
     STATIONS.each do |station|
-      req = EM::HttpRequest.new(URL % station).get
-      next if req.response_header.status != 200
+      @threads << Thread.new do 
+        req = RestClient.get(URL % station)
+        next if req.nil?
 
-      url = req.response.match(/^File1=(.*)$/)[1]
+        url = req.match(/^File1=(.*)$/)[1]
 
-      station_name = "bbc_radio_#{station}"
+        station_name = "bbc_radio_#{station}"
 
-      content = Radiodan::Playlist.new tracks: url
-      @stations[station_name] = content
+        content = Radiodan::Playlist.new tracks: url
+        @stations[station_name] = content
+      end
     end
+
+    @threads.collect(&:join)
+    @stations
   end
 end

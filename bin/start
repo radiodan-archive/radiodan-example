@@ -11,14 +11,14 @@ require 'web_server'
 
 root = File.join(File.dirname(__FILE__), '..')
 
+@bbc_stations = DownloadBBCRadio.new
+@bbc_stations.run
+
+radio1 = @bbc_stations.stations['bbc_radio_1']
+radio4 = @bbc_stations.stations['bbc_radio_4']
+
 EM.synchrony do
-  @bbc_stations = DownloadBBCRadio.new
-  @bbc_stations.run
-
-  radio1 = @bbc_stations.stations['bbc_radio_1']
-  radio4 = @bbc_stations.stations['bbc_radio_4']
-
-  radios = Radiodan::Playlist.new tracks: radio1.tracks + radio4.tracks
+  radios = Radiodan::Playlist.new(tracks: (radio1.tracks + radio4.tracks))
 
   radio = Radiodan.new do |builder|
     builder.log      STDOUT
