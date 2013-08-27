@@ -2,12 +2,10 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'radiodan'
-require 'sinatra/async'
-require 'thin'
 
-$:<< './lib'
+$: << './lib'
 require 'download_bbc_radio'
-require 'web_server'
+require 'web_app'
 
 root = File.join(File.dirname(__FILE__), '..')
 
@@ -17,18 +15,15 @@ root = File.join(File.dirname(__FILE__), '..')
 radio1 = @bbc_stations.stations['bbc_radio_1']
 radio4 = @bbc_stations.stations['bbc_radio_4']
 
-EM.synchrony do
-  radios = Radiodan::Playlist.new(tracks: (radio1.tracks + radio4.tracks))
+radios = Radiodan::Playlist.new(tracks: (radio1.tracks + radio4.tracks))
 
-  radio = Radiodan.new do |builder|
-    builder.log      STDOUT
-    builder.adapter  :MPD, :host => 'localhost', :port => 6600
-    builder.playlist radio4
-    builder.use      :touch_file, :dir => File.join(root, 'tmp')
-    builder.use      :panic, :duration => 5, :playlist => radio1
-  end
-
-  radio.start
-
-  Thin::Server.start WebServer.new(radio.player), '0.0.0.0', 3000, :signals => false
+radio = Radiodan.new do |builder|
+  builder.log      STDOUT
+  builder.adapter  :MPD, :host => 'localhost', :port => 6600
+  builder.use      :web_server, WebApp, :port => 3000
+  builder.use      :touch_file, :dir => File.join(root, 'tmp')
+  builder.use      :panic, :duration => 5, :playlist => radio1
+  builder.playlist radio4
 end
+
+radio.start
