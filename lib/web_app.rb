@@ -2,14 +2,14 @@ require 'radiodan/sinatra'
 
 class WebApp < Radiodan::Sinatra
   get '/' do
-    "<h1>Radiodan</h1><p>#{CGI.escapeHTML(player.state.inspect)}</p>"
+    "<h1>Radiodan</h1><p>#{CGI.escapeHTML(player.state.current.inspect)}</p>"
   end
 
   get '/search/:query' do
     query = params[:query]
     
     search = player.search(query)
-    player.playlist = Radiodan::Playlist.new tracks: search
+    player.playlist = Radiodan::Playlist.new mode: :random, tracks: search
     "<h1>Radiodan</h1><p>#{CGI.escapeHTML(search.inspect)}</p>"
   end
   
