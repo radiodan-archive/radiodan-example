@@ -1,7 +1,15 @@
 require 'radiodan/sinatra'
 
 class WebApp < Radiodan::Sinatra
+
+  @@stations = []
+
+  def self.stations=(list)
+    @@stations = list
+  end
+
   get '/' do
+    @stations = @@stations
     erb :index
   end
 
@@ -13,6 +21,21 @@ class WebApp < Radiodan::Sinatra
   post '/volume' do
     @player.trigger_event :change_volume, params[:volume]
     sleep(1)
+    redirect back
+  end
+
+  post '/station/previous' do
+    @player.trigger_event :change_station, :previous
+    redirect back
+  end
+
+  post '/station/next' do
+    @player.trigger_event :change_station, :next
+    redirect back
+  end
+
+  post '/station/:id' do |id|
+    @player.trigger_event :change_station, id
     redirect back
   end
 
@@ -40,6 +63,29 @@ class WebApp < Radiodan::Sinatra
         <input type="range" name="volume" value="<%= @player.state.volume %>" min="0" max="100" step="1" />
         <input type="submit" value="Change" />
       </form>
+    </section><!-- #controls -->
+    <section id="stations">
+      <p>Current station: <strong><%= @player.state.tracks.first[:Name] %></strong></p>
+      <ul>
+        <li>
+          <form method="post" action="station/previous">
+            <input type="submit" value="previous" />
+          </form>
+        </li>
+      <% @stations.each do |station| %>
+        <li>
+          <form method="post" action="station/<%= station[:name] %>">
+            <input type="submit" name="station-id" value="<%= station[:name] %>" />
+          </form>
+        </li>
+      <% end %>
+        <li>
+          <form method="post" action="station/next">
+            <input type="submit" value="next" />
+          </form>
+        </li>
+      </ul>
+    </section><!-- #stations -->
     html
   end
 end

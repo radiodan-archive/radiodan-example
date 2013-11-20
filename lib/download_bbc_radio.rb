@@ -3,7 +3,7 @@ In order to fake a radio, we need to stream radio content.
 BBC Radio streams are playlist files, which contain
 a link to a time-restricted audio stream.
 
-Every few hours, the stream disconnects and you have to 
+Every few hours, the stream disconnects and you have to
 download the playlist again to continue.
 
 This downloads the playlists and parses for the audio end point.
@@ -20,11 +20,11 @@ class DownloadBBCRadio
   def run
     @stations ||= Hash.new
     @threads = []
-    
+
     RestClient.proxy = ENV['HTTP_PROXY']
 
     STATIONS.each do |station|
-      @threads << Thread.new do 
+      @threads << Thread.new do
         req = RestClient.get(URL % station)
         next if req.nil?
 
@@ -32,12 +32,12 @@ class DownloadBBCRadio
 
         station_name = "bbc_radio_#{station}"
 
-        content = Radiodan::Playlist.new tracks: url
+        content = Radiodan::Playlist.new tracks: Radiodan::Track.new(:file => url, :id => station_name)
         @stations[station_name] = content
       end
     end
 
     @threads.collect(&:join)
-    @stations
+    @stations = Hash[@stations.sort]
   end
 end

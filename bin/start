@@ -15,12 +15,17 @@ root = File.join(File.dirname(__FILE__), '..')
 
 radio6 = @bbc_stations.stations['bbc_radio_6']
 
+WebApp.stations = @bbc_stations.stations.map { |k,v| { :id => k, :name => k } }
+
+playlist = RadioController.playlist
+playlist.tracks = radio6.tracks
+
 radio = Radiodan.new do |builder|
   builder.log      STDOUT
   builder.adapter  :MPD, :host => 'localhost', :port => 6600
-  builder.use      :web_server, WebApp, :port => 3000
-  builder.use      :radio_controller
-  builder.playlist radio6
+  builder.use      :web_server, WebApp, :port => 3000, :stations => @bbc_stations
+  builder.use      :radio_controller, :stations => @bbc_stations.stations
+  builder.playlist playlist
 end
 
 radio.start
