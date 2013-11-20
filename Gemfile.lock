@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/pixelblend/radiodan.git
-  revision: b65bfa17b540260baecf3a95701caf7b38ff9a18
+  revision: 2c830eac82f6c48701d98eac9fd8a2623f44f299
   branch: master
   specs:
     radiodan (0.0.4)
@@ -24,7 +24,7 @@ GEM
     async_sinatra (1.1.0)
       rack (>= 1.4.1)
       sinatra (>= 1.3.2)
-    coderay (1.0.9)
+    coderay (1.1.0)
     cookiejar (0.3.0)
     daemons (1.1.9)
     em-http-request (1.0.3)
@@ -34,7 +34,7 @@ GEM
       eventmachine (>= 1.0.0.beta.4)
       http_parser.rb (>= 0.5.3)
     em-resolv-replace (1.1.3)
-    em-simple_telnet (0.0.14)
+    em-simple_telnet (0.0.15)
       eventmachine (>= 1.0.0)
     em-socksify (0.3.0)
       eventmachine (>= 1.0.0.beta.4)
@@ -43,19 +43,19 @@ GEM
     eventmachine (1.0.3)
     http_parser.rb (0.5.3)
     i18n (0.6.5)
-    method_source (0.8.1)
-    mime-types (1.23)
-    pry (0.9.12.2)
-      coderay (~> 1.0.5)
+    method_source (0.8.2)
+    mime-types (2.0)
+    pry (0.9.12.3)
+      coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
     rack (1.5.2)
     rack-fiber_pool (0.9.3)
-    rack-protection (1.5.0)
+    rack-protection (1.5.1)
       rack
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    sinatra (1.4.3)
+    sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
@@ -66,7 +66,7 @@ GEM
       eventmachine (~> 1.0.0)
       rack-fiber_pool (~> 0.9)
       sinatra (~> 1.0)
-    slop (3.4.5)
+    slop (3.4.7)
     thin (1.5.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
