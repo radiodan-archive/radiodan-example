@@ -7,24 +7,32 @@ $: << './lib'
 require 'download_bbc_radio'
 require 'web_app'
 require 'radio_controller'
+require 'preference'
+
+preferences_file_path ='./db/prefs.yml'
+
+preferences = Preference.new(:file_path => preferences_file_path)
 
 root = File.join(File.dirname(__FILE__), '..')
 
 @bbc_stations = DownloadBBCRadio.new
 @bbc_stations.run
 
-radio6 = @bbc_stations.stations['bbc_radio_6']
+initial_station = @bbc_stations.stations[preferences.station_id] || @bbc_stations.stations[@bbc_stations.stations.keys.sample]
+initial_volume  = preferences.volume || 50
 
 WebApp.stations = @bbc_stations.stations.map { |k,v| { :id => k, :name => k } }
 
 playlist = RadioController.playlist
-playlist.tracks = radio6.tracks
+playlist.tracks = initial_station.tracks
+playlist.volume = initial_volume
 
 radio = Radiodan.new do |builder|
   builder.log      STDOUT
   builder.adapter  :MPD, :host => 'localhost', :port => 6600
   builder.use      :web_server, WebApp, :port => 3000, :stations => @bbc_stations
   builder.use      :radio_controller, :stations => @bbc_stations.stations
+  builder.use      :preference, :file_path => preferences_file_path
   builder.playlist playlist
 end
 
