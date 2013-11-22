@@ -6,8 +6,10 @@ require 'radiodan'
 $: << './lib'
 require 'download_bbc_radio'
 require 'web_app'
+require 'faye_relay'
 require 'radio_controller'
 require 'preference'
+require 'web_server'
 
 preferences_file_path ='./db/prefs.yml'
 
@@ -31,6 +33,7 @@ radio = Radiodan.new do |builder|
   builder.log      STDOUT
   builder.adapter  :MPD, :host => 'localhost', :port => 6600
   builder.use      :web_server, WebApp, :port => 3000, :stations => @bbc_stations
+  builder.use      :faye_relay, :port => 3000
   builder.use      :radio_controller, :stations => @bbc_stations.stations
   builder.use      :preference, :file_path => preferences_file_path
   builder.playlist playlist

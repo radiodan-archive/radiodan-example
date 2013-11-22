@@ -11,5 +11,6 @@ group :web do
   gem 'sinatra', '~> 1.4.2'
   gem 'async_sinatra', '~> 1.1.0'
   gem 'rest-client'
+  gem 'faye'
 end
 
