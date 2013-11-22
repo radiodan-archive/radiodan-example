@@ -2,4 +2,5 @@
 tmp/*
 .vagrant
 db/*.sqlite3
+db/prefs.yml
 .DS_Store
