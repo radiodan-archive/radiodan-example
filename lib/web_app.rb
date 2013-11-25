@@ -52,11 +52,21 @@ class WebApp < Radiodan::Sinatra
         var client = new Faye.Client('/faye');
         var subscription = client.subscribe('/info', function(message) {
           console.log(message);
+          $('[data-bind="state"]').text(stateFromPlaylist(message));
           $('[data-bind="station-name"]').text(stationFromPlaylist(message));
+          $('[data-bind="volume"]').text(volumeFromPlaylist(message));
         });
 
         function stationFromPlaylist(p) {
-          return p.tracks[0].Name
+          return p.tracks[0].Name;
+        }
+
+        function volumeFromPlaylist(p) {
+          return p.volume;
+        }
+
+        function stateFromPlaylist(p) {
+          return p.state == "play" ? "ON" : "OFF";
         }
 
         function publish(topic, info) {
@@ -94,10 +104,11 @@ class WebApp < Radiodan::Sinatra
     <<-html
     <section id="controls">
       <form method="post" action="power" data-faye>
-        <span><%= @player.state.state == :play ? "ON" : "OFF" %></span>
+        <span data-bind="state"><%= @player.state.state == :play ? "ON" : "OFF" %></span>
         <input type="submit" value="Power" />
       </form>
       <form method="post" action="volume" data-faye>
+        <span data-bind="volume"></span>
         <input type="range" name="volume" value="<%= @player.state.volume %>" min="0" max="100" step="1" />
         <input type="submit" value="Change" />
       </form>
