@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'faye'
+require 'eventmachine'
+
+$: << './lib'
+
+# Allows you to raise events through the
+# Faye system
+# e.g. $ bin/control /volume 60
+#      publish "/volume", 60
+
+topic, action = ARGV
+
+unless topic
+  puts <<-eos
+usage:\tbin/control <topic> <data>
+
+Examples:
+\tbin/control volume 10
+\tbin/control power
+eos
+  exit
+end
+
+
+EM.run {
+  port     = 3000
+  faye_url = "http://localhost:#{port}/faye"
+  client   = Faye::Client.new(faye_url)
+
+  puts "Client created at #{faye_url}"
+
+  topic = "/#{topic}" if topic[0] != '/'
+
+  puts "publish(#{topic}, #{action.inspect})"
+  publication  = client.publish(topic, action)
+  publication.callback { exit }
+  publication.errback  { exit }
+}
