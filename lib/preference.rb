@@ -7,10 +7,14 @@ class Preference
     @options  = config.shift
     @path     = @options[:file_path]
     @defaults = @options[:defaults]
+    @playlist = @options[:playlist]
     @prefs    = {}
   end
 
   def call(player)
+
+    player.playlist = @playlist
+
     player.register_event :playlist do |playlist|
       @current_station = playlist.tracks.first[:id]
       @prefs[:station_id] = @current_station

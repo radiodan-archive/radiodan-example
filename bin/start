@@ -35,8 +35,8 @@ radio = Radiodan.new do |builder|
   builder.use      :web_server, WebApp, :port => 3000, :stations => @bbc_stations
   builder.use      :faye_relay, :port => 3000
   builder.use      :radio_controller, :stations => @bbc_stations.stations
-  builder.use      :preference, :file_path => preferences_file_path
-  builder.playlist playlist
+  builder.use      :preference, :file_path => preferences_file_path, :playlist => playlist
+  #builder.playlist playlist
 end
 
 radio.start
