@@ -20,7 +20,6 @@ class WebApp < Radiodan::Sinatra
 
   post '/volume' do
     @player.trigger_event :change_volume, params[:volume]
-    sleep(1)
     redirect back
   end
 
