@@ -44,6 +44,11 @@
 
 <script type="text/template" id="now-playing-template">
   <h2 class="hd">Now Playing</h2>
-  <p class="title">{{ title }}</p>
-  <p class="artist">{{ artist }}</p>
+  <div>
+    <img src="http://ichef.bbci.co.uk/images/ic/112x63/{{ image }}" />
+    <div class="meta">
+      <p class="title">{{ title }}</p>
+      <p class="artist">{{ artist }}</p>
+    </div>
+  </div>
 </script>

@@ -104,6 +104,11 @@ button > * {
 }
 
 /* Now Playing */
+#now-playing img {
+  float: left;
+  padding-right: 0.5em;
+}
+
 #now-playing .title {
   font-weight: bold;
 }
