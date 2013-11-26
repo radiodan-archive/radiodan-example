@@ -3,7 +3,24 @@
   <title>Radiodan</title>
 </head>
 <body>
+  <header class="masthead">
+    <div class="grid">
+      <div class="grid-col grid-8">
+        <span class="dept">Radiodan</span>
+      </div>
+    </div><!-- .grid -->
+  </header>
+  <div class="grid">
+    <div class="project-header with-border grid-col grid-12 clearfix">
+      <div>
+        Radio Controller
+      </div>
+    </div>
+  </div><!-- .grid -->
+  <div class="grid grid-bleed grid-internal-padding panel-border">
   <%= yield %>
+  </div>
+  <link rel="stylesheet" href="/css/house-style.min.css">
   <link rel="stylesheet" href="/css/radio.css">
   <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
   <script src="/faye/client.js"></script>

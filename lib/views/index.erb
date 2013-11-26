@@ -1,15 +1,24 @@
-<section id="controls">
-  <form method="post" action="power" data-faye>
-    <span data-bind="state"><%= @player.state.state == :play ? "ON" : "OFF" %></span>
-    <input type="submit" value="Power" />
+<section id="controls" class="panel grid-col grid-4">
+  <h2 class="hd">Controls</h2>
+  <form method="post"
+        action="power"
+        data-power-state="<%= @player.state.state == :play ? "on" : "off" %>"
+        data-faye>
+    <button class="btn btn-with-text" type="submit">
+      <span class="icon"></span>
+      <span data-bind="state"><%= @player.state.state == :play ? "ON" : "OFF" %></span>
+    </button>
   </form>
   <form method="post" action="volume" data-faye>
-    <span data-bind="volume"></span>
+    <p>Volume</p>
     <input type="range" name="volume" value="<%= @player.state.volume %>" min="0" max="100" step="1" />
-    <input type="submit" value="Change" />
+    <input type="submit" class="btn btn-with-text" value="Change" />
+    <span data-bind="volume"></span>
   </form>
-</section><!-- #controls -->
-<section id="stations">
+</section><!-- #controls .grid-col .panel -->
+
+<section id="stations" class="panel grid-col grid-8">
+  <h2 class="hd">Stations</h2>
   <p>Current station: <strong data-bind="station-name"><%= @player.state.tracks.first[:Name] %></strong></p>
   <ul>
     <li>
