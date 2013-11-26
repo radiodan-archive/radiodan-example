@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+
+# $: << './lib'
+# require 'now_playing_client'
+# @now_playing_client = NowPlayingClient.new
+
+require 'em/mqtt'
+require 'json'
+
+require 'faye'
+
+@server   = 'test.mosquitto.org'
+@topic    = 'bbc/nowplaying/#'
+@faye_url = "http://localhost:3000/faye"
+
+@client = Faye::Client.new(@faye_url)
+
+EventMachine.run do
+  EventMachine::MQTT::ClientConnection.connect(@server) do |c|
+    c.subscribe(@topic)
+    c.receive_callback do |message|
+      station = message.topic.gsub('#', '').gsub('bbc/nowplaying/', '')
+      payload = JSON.parse(message.payload)
+      payload[:station_id] = station
+      @client.publish('/now_playing', payload)
+      p "Publishing #{station}"
+    end
+  end
+end

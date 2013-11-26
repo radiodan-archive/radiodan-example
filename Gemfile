@@ -14,3 +14,4 @@ group :web do
   gem 'faye'
 end
 
+gem 'em-mqtt'

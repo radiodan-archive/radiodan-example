@@ -39,27 +39,20 @@ class FayeRelay
     end
 
     player.register_event :sync do |playlist|
+      if playlist.tracks.first.attributes[:id].nil? && @player.playlist.tracks.first.attributes[:id]
+        playlist.tracks.first.attributes[:id] = @player.playlist.tracks.first.attributes[:id]
+      end
+
+      # We use get track id from the current player playlist since it
+      # contains the id of the stream that we set
+      # and not the human-readable name that comes from
+      # mpd e.g. 'bbc_radio_2' rather than "BBC Radio 2"
       @client.publish('/info', playlist.attributes)
-      # @client.publish('/station', :id => current_track[:id], :name => current_track[:Name] )
     end
 
-    # player.register_event :toggle_power do
-    #   power!
-    # end
+    player.register_event :now_playing do |info|
+      @client.publish('/now_playing', info)
+    end
 
-    # player.register_event :change_volume do |volume|
-    #   volume(volume)
-    # end
-
-    # player.register_event :change_station do |station_id|
-    #   case station_id
-    #   when :next
-    #     next_station
-    #   when :previous
-    #     previous_station
-    #   else
-    #     station(station_id)
-    #   end
-    # end
   end
 end

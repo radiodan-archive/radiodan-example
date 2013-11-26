@@ -23,14 +23,14 @@
     <form method="post" action="station/previous" data-faye>
       <button class="btn btn-previous" type="submit" title="Previous">&lt;</button>
     </form>
-    Current station: <strong data-bind="station-name"><%= @player.state.tracks.first[:Name] %></strong>
+    Current station: <strong data-bind="station-name" data-current-station-id="<%= @player.state.tracks.first[:id] %>"><%= @player.state.tracks.first[:Name] %></strong>
     <form method="post" action="station/next" data-faye>
       <button class="btn btn-next" type="submit" title="Next">&gt;</button>
     </form>
   </p>
   <ul class="list">
   <% @stations.each do |station| %>
-    <li>
+    <li data-station-id="<%= station[:name] %>">
       <form method="post" action="station/<%= station[:name] %>" data-faye>
         <button type="submit" name="station-id"><%= station[:name] %></button>
       </form>
@@ -38,3 +38,12 @@
   <% end %>
   </ul>
 </section><!-- #stations -->
+
+<section id="now-playing" class="panel grid-col grid-4">
+</section>
+
+<script type="text/template" id="now-playing-template">
+  <h2 class="hd">Now Playing</h2>
+  <p class="title">{{ title }}</p>
+  <p class="artist">{{ artist }}</p>
+</script>

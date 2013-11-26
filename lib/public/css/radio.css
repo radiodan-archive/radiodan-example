@@ -101,4 +101,7 @@ button > * {
   background: none;
 }
 
-
+/* Now Playing */
+#now-playing .title {
+  font-weight: bold;
+}
