@@ -1,8 +1,8 @@
 require 'thin'
+require 'faye'
 
-class Radiodan
-class WebServer
-  include Logging
+class FayeWebServer
+  include Radiodan::Logging
 
   def initialize(*config)
     @klass   = config.shift
@@ -18,5 +18,4 @@ class WebServer
       run klass.new(player)
     end
   end
-end
 end
