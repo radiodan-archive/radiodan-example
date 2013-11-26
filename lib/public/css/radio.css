@@ -56,6 +56,12 @@ button > * {
 }
 
 /* Stations */
+/* Previous/next control */
+[action="station/previous"],
+[action="station/next"] {
+  display: inline-block;
+}
+
 #stations ul {
   list-style: none;
   padding: 0;
@@ -63,4 +69,23 @@ button > * {
 
 #stations ul li {
   display: inline-block;
+  height: 6em;
+  line-height: 6em;
+  min-width: 6em;
+  background-color: rgba(0,255,255,0.2);
 }
+
+#stations ul li:hover {
+  background-color: rgba(0,255,255,0.3);
+}
+
+#stations ul li.active {
+  background-color: rgba(0,255,255,0.4);
+}
+
+#stations ul li button {
+  border: none;
+  background: none;
+}
+
+

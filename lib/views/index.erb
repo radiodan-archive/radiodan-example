@@ -19,24 +19,22 @@
 
 <section id="stations" class="panel grid-col grid-8">
   <h2 class="hd">Stations</h2>
-  <p>Current station: <strong data-bind="station-name"><%= @player.state.tracks.first[:Name] %></strong></p>
-  <ul>
-    <li>
-      <form method="post" action="station/previous" data-faye>
-        <input type="submit" value="previous" />
-      </form>
-    </li>
+  <p>
+    <form method="post" action="station/previous" data-faye>
+      <button class="btn btn-previous" type="submit" title="Previous">&lt;</button>
+    </form>
+    Current station: <strong data-bind="station-name"><%= @player.state.tracks.first[:Name] %></strong>
+    <form method="post" action="station/next" data-faye>
+      <button class="btn btn-next" type="submit" title="Next">&gt;</button>
+    </form>
+  </p>
+  <ul class="list">
   <% @stations.each do |station| %>
     <li>
       <form method="post" action="station/<%= station[:name] %>" data-faye>
-        <input type="submit" name="station-id" value="<%= station[:name] %>" />
+        <button type="submit" name="station-id"><%= station[:name] %></button>
       </form>
     </li>
   <% end %>
-    <li>
-      <form method="post" action="station/next" data-faye>
-        <input type="submit" value="next" />
-      </form>
-    </li>
   </ul>
 </section><!-- #stations -->
