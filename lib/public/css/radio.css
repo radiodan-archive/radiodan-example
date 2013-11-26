@@ -1,3 +1,16 @@
+/* Responsive */
+/* Linearise grid below Group 3 */
+@media (max-width: 600px) {
+  .grid {
+    /*border: 10px solid blue;*/
+  }
+
+  .grid-col {
+    float: none;
+    width: 100%;
+  }
+}
+
 /* Controls */
 [data-power-state] button {
   width: 100%;
