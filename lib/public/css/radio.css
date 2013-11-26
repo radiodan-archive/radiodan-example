@@ -97,6 +97,8 @@ button > * {
 }
 
 #stations ul li button {
+  display: block;
+  height: 100%;
   border: none;
   background: none;
 }
