@@ -1,4 +1,10 @@
 GIT
+  remote: git://github.com/bbcrd/bbc_service_map.git
+  revision: da09b311dccfb0f2fa1c7b32f9702d2510169e3a
+  specs:
+    bbc_service_map (0.0.2)
+
+GIT
   remote: https://github.com/pixelblend/radiodan.git
   revision: 2c830eac82f6c48701d98eac9fd8a2623f44f299
   branch: master
@@ -95,6 +101,7 @@ PLATFORMS
 
 DEPENDENCIES
   async_sinatra (~> 1.1.0)
+  bbc_service_map!
   em-mqtt
   faye
   pry

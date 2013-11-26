@@ -1,4 +1,5 @@
 require 'faye'
+require 'bbc_service_map'
 
 class FayeRelay
   include Radiodan::Logging
@@ -39,14 +40,11 @@ class FayeRelay
     end
 
     player.register_event :sync do |playlist|
-      if playlist.tracks.first.attributes[:id].nil? && @player.playlist.tracks.first.attributes[:id]
-        playlist.tracks.first.attributes[:id] = @player.playlist.tracks.first.attributes[:id]
-      end
+      # Lookup the stream name from the playlist and convert
+      # to a BBC Programmes service id e.g. 'BBC Radio 2' -> 'radio2'
+      bbc_service = BBCRD::ServiceMap.lookup(playlist.tracks.first.attributes[:Name])
+      playlist.tracks.first.attributes[:id] = bbc_service.programmes_id if bbc_service
 
-      # We use get track id from the current player playlist since it
-      # contains the id of the stream that we set
-      # and not the human-readable name that comes from
-      # mpd e.g. 'bbc_radio_2' rather than "BBC Radio 2"
       @client.publish('/info', playlist.attributes)
     end
 

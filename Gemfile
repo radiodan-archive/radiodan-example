@@ -15,3 +15,4 @@ group :web do
 end
 
 gem 'em-mqtt'
+gem 'bbc_service_map', :github => 'bbcrd/bbc_service_map'
