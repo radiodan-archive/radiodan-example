@@ -12,8 +12,12 @@ class NowPlayingClient
     connect!
   end
 
-  def now_playing(station_id)
-    cache_get(station_id)
+  def now_playing(station_id=nil)
+    if station_id
+      cache_get(station_id)
+    else
+      @current
+    end
   end
 
   def on_message(&block)

@@ -20,6 +20,14 @@ EventMachine.run do
 
   @client = Faye::Client.new(@faye_url)
 
+  EventMachine.add_periodic_timer( 10 ) do
+    currently_playing = @now_playing_client.now_playing
+    puts "Publishing now playing messages #{currently_playing.length}"
+    currently_playing.each do |key, message|
+      @client.publish('/now_playing', message)
+    end
+  end
+
   @now_playing_client.on_message do |message|
     puts "Now Playing message from #{message[:station_id]}"
     @client.publish('/now_playing', message)
