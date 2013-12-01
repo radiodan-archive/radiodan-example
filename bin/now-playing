@@ -2,30 +2,26 @@
 require 'rubygems'
 require 'bundler/setup'
 
-# $: << './lib'
-# require 'now_playing_client'
-# @now_playing_client = NowPlayingClient.new
-
-require 'em/mqtt'
-require 'json'
-
 require 'faye'
+require 'eventmachine'
 
-@server   = 'test.mosquitto.org'
-@topic    = 'bbc/nowplaying/#'
+# Get foreman not to buffer logging output
+$stdout.sync = true
+
+$: << './lib'
+require 'now_playing_client'
+
+puts "Started"
+
 @faye_url = "http://localhost:3000/faye"
 
-@client = Faye::Client.new(@faye_url)
-
 EventMachine.run do
-  EventMachine::MQTT::ClientConnection.connect(@server) do |c|
-    c.subscribe(@topic)
-    c.receive_callback do |message|
-      station = message.topic.gsub('#', '').gsub('bbc/nowplaying/', '')
-      payload = JSON.parse(message.payload)
-      payload[:station_id] = station
-      @client.publish('/now_playing', payload)
-      p "Publishing #{station}"
-    end
+  @now_playing_client = NowPlayingClient.new
+
+  @client = Faye::Client.new(@faye_url)
+
+  @now_playing_client.on_message do |message|
+    puts "Now Playing message from #{message[:station_id]}"
+    @client.publish('/now_playing', message)
   end
 end

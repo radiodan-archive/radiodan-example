@@ -1,28 +1,34 @@
+require 'eventmachine'
 require 'em/mqtt'
-require 'em-synchrony'
+require 'json'
 
 class NowPlayingClient
-  #include Radiodan::Logging
 
-  def initialize(publish_client=nil)
-    # @publish_client = publish_client
-    @server = 'test.mosquitto.org'
-    @topic  = 'bbc/#'
+  def initialize
+    @server    = 'test.mosquitto.org'
+    @topic     = 'bbc/nowplaying/#'
+    @callbacks = []
     connect!
   end
 
-  def on_change(&block)
+  def on_message(&block)
+    @callbacks << block
+  end
+
+  def notify(payload={})
+    @callbacks.each { |cb| cb.call(payload) }
   end
 
   private
   def connect!
-    EventMachine.synchrony do
-      puts "Connecting to #{@server}"
+    EventMachine.run do
       EventMachine::MQTT::ClientConnection.connect(@server) do |c|
         c.subscribe(@topic)
         c.receive_callback do |message|
-          p message[:topic]
-          p message[:payload]
+          station = message.topic.gsub('#', '').gsub('bbc/nowplaying/', '')
+          payload = JSON.parse(message.payload)
+          payload[:station_id] = station
+          notify(payload)
         end
       end
     end
