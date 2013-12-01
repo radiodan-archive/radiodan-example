@@ -8,7 +8,12 @@ class NowPlayingClient
     @server    = 'test.mosquitto.org'
     @topic     = 'bbc/nowplaying/#'
     @callbacks = []
+    @current   = {}
     connect!
+  end
+
+  def now_playing(station_id)
+    cache_get(station_id)
   end
 
   def on_message(&block)
@@ -20,15 +25,33 @@ class NowPlayingClient
   end
 
   private
+  def cache_store(key, value)
+    @current[key] = value
+  end
+
+  def cache_get(key)
+    @current[key] if @current.has_key?(key)
+  end
+
+  def parse(message)
+    station = message.topic.gsub('#', '').gsub('bbc/nowplaying/', '')
+    payload = JSON.parse(message.payload)
+    payload[:station_id] = station
+    payload
+  end
+
+  def handle_incoming_message(message)
+    payload = parse(message)
+    cache_store(payload[:station_id], payload)
+    notify(payload)
+  end
+
   def connect!
     EventMachine.run do
       EventMachine::MQTT::ClientConnection.connect(@server) do |c|
         c.subscribe(@topic)
         c.receive_callback do |message|
-          station = message.topic.gsub('#', '').gsub('bbc/nowplaying/', '')
-          payload = JSON.parse(message.payload)
-          payload[:station_id] = station
-          notify(payload)
+          handle_incoming_message(message)
         end
       end
     end
