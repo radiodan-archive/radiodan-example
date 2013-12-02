@@ -25,8 +25,16 @@ class RadioController
       power!
     end
 
-    player.register_event :change_volume do |volume|
-      volume(volume)
+    player.register_event :change_volume do |new_volume|
+      current_volume = volume
+      case new_volume
+      when 'up'
+        volume(current_volume + 2)
+      when 'down'
+        volume(current_volume - 2)
+      else
+        volume(new_volume)
+      end
     end
 
     player.register_event :change_station do |station_id|
@@ -50,8 +58,13 @@ class RadioController
     end
   end
 
-  def volume(value)
-    @player.playlist.volume = value
+  def volume
+    @player.playlist.volume
+  end
+
+  def volume(value=nil)
+    @player.playlist.volume = value unless value.nil? || value < 0 || value > 100
+    @player.playlist.volume
   end
 
   def next_station
