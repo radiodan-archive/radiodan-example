@@ -34,7 +34,7 @@ class Preference
       save!
     end
 
-    player.register_event :change_volume do |volume|
+    player.register_event :volume do |volume|
       @prefs[:volume] = volume
       save!
     end
@@ -51,6 +51,10 @@ class Preference
   end
 
   def load!
-    @prefs = YAML.load_file(@path) || {}
+    begin
+      @prefs = YAML.load_file(@path)
+    rescue
+      @prefs = {}
+    end
   end
 end
