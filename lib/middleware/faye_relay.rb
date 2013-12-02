@@ -42,10 +42,13 @@ class FayeRelay
     player.register_event :sync do |playlist|
       # Lookup the stream name from the playlist and convert
       # to a BBC Programmes service id e.g. 'BBC Radio 2' -> 'radio2'
-      bbc_service = BBCRD::ServiceMap.lookup(playlist.tracks.first.attributes[:Name])
-      playlist.tracks.first.attributes[:id] = bbc_service.programmes_id if bbc_service
-
-      @client.publish('/info', playlist.attributes)
+      begin
+        bbc_service = BBCRD::ServiceMap.lookup(playlist.tracks.first.attributes[:Name])
+        playlist.tracks.first.attributes[:id] = bbc_service.programmes_id if bbc_service
+        @client.publish('/info', playlist.attributes)
+      rescue
+        logger.error "Error publishing playlist attributes at Sync"
+      end
     end
 
     player.register_event :now_playing do |info|
