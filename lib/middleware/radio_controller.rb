@@ -80,6 +80,8 @@ class RadioController
     if station_playlist
       tracks = station_playlist[1].tracks
       @player.playlist.tracks = tracks
+    else
+      logger.warn "Can't find station: #{station_id}"
     end
   end
 
