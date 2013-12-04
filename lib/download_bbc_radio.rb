@@ -14,7 +14,7 @@ require "rest-client"
 
 class DownloadBBCRadio
   URL = "http://www.bbc.co.uk/radio/listen/live/r%s_aaclca.pls"
-  STATIONS = %w{1 1x 2 3 4 4lw 4x 5l 5lsp 6}
+  STATIONS = %w{1 1x 2 3 4 4lw 4x 5l 5lsp 6 an}
   attr_accessor :stations
 
   def run
@@ -36,6 +36,9 @@ class DownloadBBCRadio
         @stations[station_name] = content
       end
     end
+
+    # World Service stream
+    @stations["bbc_radio_ws"] = Radiodan::Playlist.new(tracks: Radiodan::Track.new(:file => "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk", :id => "bbc_radio_ws"))
 
     @threads.collect(&:join)
     @stations = Hash[@stations.sort]
