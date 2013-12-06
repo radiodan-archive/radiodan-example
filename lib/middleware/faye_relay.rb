@@ -39,6 +39,11 @@ class FayeRelay
       @player.trigger_event :change_station, action_or_id
     end
 
+    @client.subscribe('/avoid') do
+      logger.info "/avoid"
+      @player.trigger_event :avoid
+    end
+
     player.register_event :sync do |playlist|
       # Lookup the stream name from the playlist and convert
       # to a BBC Programmes service id e.g. 'BBC Radio 2' -> 'radio2'

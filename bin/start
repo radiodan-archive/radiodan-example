@@ -10,6 +10,7 @@ require 'middleware/faye_relay'
 require 'middleware/radio_controller'
 require 'middleware/preference'
 require 'middleware/faye_web_server'
+require 'middleware/avoider'
 
 preferences_file_path = './db/prefs.yml'
 
@@ -27,6 +28,7 @@ radio = Radiodan.new do |builder|
   builder.use      :faye_relay, :port => 3000
   builder.use      :radio_controller, :stations => @bbc_stations.stations
   builder.use      :preference, :file_path => preferences_file_path, :playlist => RadioController.playlist, :stations => @bbc_stations.stations
+  builder.use      :avoider, :avoiding_track => Radiodan::Track.new(:file => 'birdsong.mp3')
 end
 
 radio.start

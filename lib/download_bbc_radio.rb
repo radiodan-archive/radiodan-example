@@ -28,7 +28,7 @@ class DownloadBBCRadio
         req = RestClient.get(URL % station)
         next if req.nil?
 
-        url = req.match(/^File1=(.*)$/)[1]
+        url = req.match(/^File2=(.*)$/)[1]
 
         station_name = "bbc_radio_#{station}"
 

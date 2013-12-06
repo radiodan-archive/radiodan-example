@@ -41,6 +41,7 @@ class NowPlayingClient
     station = message.topic.gsub('#', '').gsub('bbc/nowplaying/', '')
     payload = JSON.parse(message.payload)
     payload[:station_id] = station
+    payload[:start_time] = Time.now
     payload
   end
 
