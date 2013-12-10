@@ -46,7 +46,7 @@ class Avoider
           player.playlist.tracks = replacement_tracks
           @avoiding = true
 
-          EventMachine.add_periodic_timer(time_left_for_track) do
+          EventMachine.add_timer(time_left_for_track) do
             logger.info "Track should be finished, reinstating previous station"
             @player.playlist.tracks = @avoided_track
             @avoiding = false
