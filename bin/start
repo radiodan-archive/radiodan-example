@@ -6,6 +6,7 @@ require 'radiodan'
 $: << './lib'
 require 'download_bbc_radio'
 require 'web_app'
+require 'radio_station'
 require 'middleware/faye_relay'
 require 'middleware/radio_controller'
 require 'middleware/preference'
@@ -16,18 +17,19 @@ preferences_file_path = './db/prefs.yml'
 
 root = File.join(File.dirname(__FILE__), '..')
 
-@bbc_stations = DownloadBBCRadio.new
-@bbc_stations.run
+bbc_stations = RadioStation.list
 
-WebApp.stations = @bbc_stations.stations.map { |k,v| { :id => k, :name => k } }
+puts "bbc_stations #{bbc_stations}"
+
+WebApp.stations = bbc_stations
 
 radio = Radiodan.new do |builder|
   builder.log      STDOUT
   builder.adapter  :MPD, :host => 'localhost', :port => 6600
-  builder.use      :faye_web_server, WebApp, :port => 3000, :stations => @bbc_stations
+  builder.use      :faye_web_server, WebApp, :port => 3000
   builder.use      :faye_relay, :port => 3000
-  builder.use      :radio_controller, :stations => @bbc_stations.stations
-  builder.use      :preference, :file_path => preferences_file_path, :playlist => RadioController.playlist, :stations => @bbc_stations.stations
+  builder.use      :radio_controller, :stations => bbc_stations
+  builder.use      :preference, :file_path => preferences_file_path, :playlist => RadioController.playlist, :stations => bbc_stations
   builder.use      :avoider, :avoiding_track => Radiodan::Track.new(:file => 'birdsong.mp3')
 end
 

@@ -16,13 +16,13 @@ class Preference
 
     # Setup preferences for initial station
     # If no initial station saved, choose a random one
-    initial_station = @stations[station_id] || @stations[@stations.keys.sample]
+    initial_station = @stations.find { |station| station.bbc_id == station_id } || @stations.first
 
     # If no initial volume, choose 50%
     initial_volume  = volume || 50
 
     # Set initial settings
-    @playlist.tracks = initial_station.tracks
+    @playlist.tracks = initial_station.playlist.tracks
     @playlist.volume = initial_volume
 
     # Set playlist on the player

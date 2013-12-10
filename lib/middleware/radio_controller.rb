@@ -1,3 +1,5 @@
+require 'eventmachine'
+
 class RadioController
   include Radiodan::Logging
 
@@ -11,6 +13,7 @@ class RadioController
     @options  = config.shift
     @stations = @options[:stations] || []
     @current_station = nil
+    @expiry_timer = nil
   end
 
   def call(player)
@@ -18,7 +21,11 @@ class RadioController
     logger.debug "RadioController middleware"
 
     player.register_event :playlist do |playlist|
-      @current_station = playlist.tracks.first[:id]
+      station = @stations.find { |s| s.bbc_id == playlist.tracks.first[:id] }
+      @current_station = station if station
+
+      # Update expiry timer
+      puts "New station, will expire: #{@current_station.expires}"
     end
 
     player.register_event :toggle_power do
@@ -76,9 +83,9 @@ class RadioController
   end
 
   def station(station_id)
-    station_playlist = @stations.find { |id, playlist| id == station_id }
-    if station_playlist
-      tracks = station_playlist[1].tracks
+    station = @stations.find { |station| station.bbc_id == station_id }
+    if station
+      tracks = station.playlist.tracks
       @player.playlist.tracks = tracks
     else
       logger.warn "Can't find station: #{station_id}"
@@ -87,10 +94,9 @@ class RadioController
 
   private
   def surrounding_stations
-    stations = @stations.keys
-    current_station_index = stations.index(@current_station)
-    next_station = stations[(current_station_index + 1) % @stations.length]
-    prev_station = stations[(current_station_index - 1) % @stations.length]
-    { :next => next_station, :previous => prev_station }
+    current_station_index = @stations.index(@current_station)
+    next_station = @stations[(current_station_index + 1) % @stations.length]
+    prev_station = @stations[(current_station_index - 1) % @stations.length]
+    { :next => next_station.bbc_id, :previous => prev_station.bbc_id }
   end
 end

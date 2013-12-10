@@ -38,9 +38,9 @@
   </p>
   <ul class="list">
   <% @stations.each do |station| %>
-    <li data-station-id="<%= station[:name] %>">
-      <form method="post" action="station/<%= station[:name] %>" data-faye>
-        <button type="submit" name="station-id"><%= station[:name] %></button>
+    <li data-station-id="<%= station.bbc_id %>">
+      <form method="post" action="station/<%= station.bbc_id %>" data-faye>
+        <button type="submit" name="station-id"><%= station.title %></button>
       </form>
     </li>
   <% end %>
