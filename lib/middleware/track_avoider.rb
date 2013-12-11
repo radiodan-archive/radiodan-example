@@ -2,7 +2,7 @@ require 'eventmachine'
 require 'now_playing_client'
 require 'bbc_service_map'
 
-class Avoider
+class TrackAvoider
   include Radiodan::Logging
 
   def initialize(*config)
@@ -20,7 +20,10 @@ class Avoider
       # When avoid event fired, stash the current
       # station's Track object and wait until the
       # current playing song is finished
-      player.register_event :avoid do
+      player.register_event :avoid do |type|
+
+        # Only Avoid tracks
+        return unless type == :track
 
         if @avoiding
           logger.info "Already avoiding"
