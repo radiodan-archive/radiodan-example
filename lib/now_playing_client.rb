@@ -1,14 +1,16 @@
 require 'eventmachine'
+require 'em-synchrony'
 require 'em/mqtt'
 require 'json'
 
 class NowPlayingClient
 
-  def initialize
+  def initialize(opts={})
     @server    = 'test.mosquitto.org'
     @topic     = 'bbc/nowplaying/#'
     @callbacks = []
     @current   = {}
+    @expire_tracks = opts[:expire_tracks] || false
     connect!
   end
 
@@ -48,7 +50,18 @@ class NowPlayingClient
   def handle_incoming_message(message)
     payload = parse(message)
     cache_store(payload[:station_id], payload)
+    expire_on_end(payload) if @expire_tracks
     notify(payload)
+  end
+
+  def expire_on_end(message)
+    duration   = message['duration']
+    station_id = message[:station_id]
+    EventMachine::Synchrony.add_timer(duration) do
+      expired_message = { :station_id => station_id }
+      cache_store(station_id, expired_message)
+      notify(expired_message)
+    end
   end
 
   def connect!

@@ -16,7 +16,7 @@ puts "Started"
 @faye_url = "http://localhost:3000/faye"
 
 EventMachine.run do
-  @now_playing_client = NowPlayingClient.new
+  @now_playing_client = NowPlayingClient.new(:expire_tracks => true)
 
   @client = Faye::Client.new(@faye_url)
 
@@ -29,7 +29,7 @@ EventMachine.run do
   end
 
   @now_playing_client.on_message do |message|
-    puts "Now Playing message from #{message[:station_id]}"
+    puts "Now Playing message from #{message[:station_id]} (#{message['title']})"
     @client.publish('/now_playing', message)
   end
 end
