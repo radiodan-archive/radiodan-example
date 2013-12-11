@@ -47,11 +47,19 @@ class NowPlayingClient
     payload
   end
 
+  def is_duplicate?(msg)
+    cached = now_playing(msg[:station_id])
+    return false if cached.nil?
+    (cached['artist'] == msg['artist']) && (cached['title'] == msg['title'])
+  end
+
   def handle_incoming_message(message)
     payload = parse(message)
-    cache_store(payload[:station_id], payload)
-    expire_on_end(payload) if @expire_tracks
-    notify(payload)
+    unless is_duplicate?(payload)
+      cache_store(payload[:station_id], payload)
+      expire_on_end(payload) if @expire_tracks
+      notify(payload)
+    end
   end
 
   def expire_on_end(message)
