@@ -12,6 +12,7 @@ require 'middleware/radio_controller'
 require 'middleware/preference'
 require 'middleware/faye_web_server'
 require 'middleware/track_avoider'
+require 'middleware/programme_avoider'
 
 preferences_file_path = './db/prefs.yml'
 
@@ -46,6 +47,7 @@ radio = Radiodan.new do |builder|
   builder.use      :radio_controller, :stations => bbc_stations
   builder.use      :preference, :file_path => preferences_file_path, :playlist => RadioController.playlist, :stations => bbc_stations
   builder.use      :track_avoider, :avoiding_track => Radiodan::Track.new(:file => avoiding_filename)
+  builder.use      :programme_avoider, :avoiding_track => Radiodan::Track.new(:file => avoiding_filename)
 end
 
 radio.start
