@@ -5,35 +5,36 @@ require "rest-client"
 
 class RadioStation
   STATIONS = {
-    :'1'   => 'BBC Radio 1',
-    :'1x'  => 'BBC Radio 1xtra',
-    :'2'   => 'BBC Radio 2',
-    :'3'   => 'BBC Radio 3',
-    :'4'   => 'BBC Radio 4',
-    :'4lw' => 'BBC Radio Long Wave',
-    :'4x'  => 'BBC Radio 4 Xtra',
-    :'5l'  => 'BBC Radio 5 Live',
-    :'6'   => 'BBC Radio 6 Music',
-    :'an'  => 'BBC Asian Network',
-    :'ws'  => 'BBC World Service',
+    :'1'   => { :bbc_id => 'radio1',       :title => 'BBC Radio 1'         },
+    :'1x'  => { :bbc_id => '1xtra',        :title => 'BBC Radio 1xtra'     },
+    :'2'   => { :bbc_id => 'radio2',       :title => 'BBC Radio 2'         },
+    :'3'   => { :bbc_id => 'radio3',       :title => 'BBC Radio 3'         },
+    :'4'   => { :bbc_id => 'radio4',       :title => 'BBC Radio 4'         },
+    :'4lw' => { :bbc_id => 'radio4/lw',    :title => 'BBC Radio Long Wave' },
+    :'4x'  => { :bbc_id => 'radio4extra',  :title => 'BBC Radio 4 Xtra'    },
+    :'5l'  => { :bbc_id => '5live',        :title => 'BBC Radio 5 Live'    },
+    :'6'   => { :bbc_id => '6music',       :title => 'BBC Radio 6 Music'   },
+    :'an'  => { :bbc_id => 'asiannetwork', :title => 'BBC Asian Network'   },
+    :'ws'  => { :bbc_id => 'worldservice', :title => 'BBC World Service'   },
   }
 
   URL = "http://www.bbc.co.uk/radio/listen/live/r%s_aaclca.pls"
 
   def self.list
-    STATIONS.map do |id,title|
+    STATIONS.map do |id,props|
       if id == :'ws'
-        RadioStation.new(id.to_s, title, "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk")
+        RadioStation.new(id.to_s, props[:bbc_id], props[:title], "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk")
       else
-        RadioStation.new(id.to_s, title)
+        RadioStation.new(id.to_s, props[:bbc_id], props[:title])
       end
     end
   end
 
-  def initialize(id, title=nil, url=nil)
-    @id    = id
-    @title = title
-    @url   = url || URL
+  def initialize(id, bbc_id, title=nil, url=nil)
+    @id     = id
+    @bbc_id = bbc_id
+    @title  = title
+    @url    = url || URL
   end
 
   def stream_id
@@ -41,7 +42,7 @@ class RadioStation
   end
 
   def bbc_id
-    "bbc_radio_#{stream_id}"
+    @bbc_id
   end
 
   def title
