@@ -2,10 +2,12 @@ require 'eventmachine'
 require 'em-synchrony'
 require 'em/mqtt'
 require 'json'
+require 'logger'
 
 class NowPlayingClient
 
   def initialize(opts={})
+    @logger    = opts[:logger] || Logger.new(STDOUT)
     @server    = 'test.mosquitto.org'
     @topic     = 'bbc/nowplaying/#'
     @callbacks = []
@@ -50,14 +52,15 @@ class NowPlayingClient
   def is_duplicate?(msg)
     cached = now_playing(msg[:station_id])
     return false if cached.nil?
-    (cached['artist'] == msg['artist']) && (cached['title'] == msg['title'])
+    message_key(cached) == message_key(msg)
   end
 
   def handle_incoming_message(message)
     payload = parse(message)
     unless is_duplicate?(payload)
-      cache_store(payload[:station_id], payload)
-      expire_on_end(payload) if @expire_tracks
+      key = payload[:station_id]
+      timer = expire_on_end(payload) if @expire_tracks
+      cache_store(key, payload)
       notify(payload)
     end
   end
@@ -65,11 +68,24 @@ class NowPlayingClient
   def expire_on_end(message)
     duration   = message['duration']
     station_id = message[:station_id]
+    @logger.debug "Setting #{duration}s timer for #{station_id} #{message_key(message)}"
+
     EventMachine::Synchrony.add_timer(duration) do
-      expired_message = { :station_id => station_id }
-      cache_store(station_id, expired_message)
-      notify(expired_message)
+      current = now_playing(station_id)
+      @logger.debug "Timer done for #{station_id} #{message_key(message)} / #{message_key(current)}"
+      if message_key(message) == message_key(current)
+        @logger.debug "Expiring #{station_id} #{message_key(message)}"
+        current[:expired] = true
+        cache_store(station_id, current)
+        notify(current)
+      end
     end
+  end
+
+  # Returns a key to identify identical messages
+  # A message is identical if it has the same artist and title
+  def message_key(message)
+    "#{message['artist']}-#{message['title']}"
   end
 
   def connect!

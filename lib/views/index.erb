@@ -56,7 +56,10 @@
 </script>
 
 <script type="text/template" id="now-playing-template">
-  <h2 class="hd">Now Playing</h2>
+  <h2 class="hd">
+    {{#expired}}Just Played{{/expired}}
+    {{^expired}}Now Playing{{/expired}}
+  </h2>
   <div>
     <img src="http://ichef.bbci.co.uk/images/ic/112x63/{{ image }}" />
     <div class="meta">
