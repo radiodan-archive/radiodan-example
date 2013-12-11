@@ -61,11 +61,18 @@ class RadioStation
   end
 
   def expires
-    puts "Calling expires"
+    date = nil
+    end_time_secs = stream_url.match(/e=([\d]*)/)
+    date = DateTime.strptime(end_time_secs[1],'%s') if end_time_secs && end_time_secs.length > 0
+    date
   end
 
   def pls_url
     @url % stream_id
+  end
+
+  def reset!
+    @pls_file = nil
   end
 
   private

@@ -1,9 +1,13 @@
 require 'eventmachine'
+require 'date'
 
 class RadioController
   include Radiodan::Logging
 
   @@playlist = Radiodan::Playlist.new
+
+  # Secs before feed expiry to refresh
+  FEED_EXPIRY_BUFFER = 60
 
   def self.playlist
     @@playlist
@@ -25,7 +29,20 @@ class RadioController
       @current_station = station if station
 
       # Update expiry timer
-      puts "New station, will expire: #{@current_station.expires}"
+      logger.info "New station, will expire: #{@current_station.expires}"
+
+      if @expiry_timer
+        logger.debug "Cancelling existing timer"
+        logger.debug @expiry_timer.class
+        @expiry_timer.cancel
+      end
+
+      secs_until_feed_expires = @current_station.expires.to_time - DateTime.now.to_time
+      logger.debug "Feed expires in #{secs_until_feed_expires}s"
+      @expiry_timer = EventMachine::Synchrony.add_timer(secs_until_feed_expires - FEED_EXPIRY_BUFFER) do
+        @current_station.reset!
+        player.playlist.tracks = @current_station.playlist.tracks
+      end
     end
 
     player.register_event :toggle_power do
