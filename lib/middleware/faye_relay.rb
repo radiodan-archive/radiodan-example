@@ -39,9 +39,9 @@ class FayeRelay
       @player.trigger_event :change_station, action_or_id
     end
 
-    @client.subscribe('/avoid') do
-      logger.info "/avoid"
-      @player.trigger_event :avoid
+    @client.subscribe('/avoid') do |type|
+      logger.info "/avoid #{type}"
+      @player.trigger_event :avoid, type.to_sym
     end
 
     player.register_event :sync do |playlist|

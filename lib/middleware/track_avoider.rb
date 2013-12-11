@@ -9,6 +9,7 @@ class TrackAvoider
     @options  = config.shift
     @avoiding_track = @options[:avoiding_track]
     @avoiding = false
+    @avoiding_timer = nil
   end
 
   def call(player)
@@ -17,13 +18,21 @@ class TrackAvoider
     EM.run do
       @now_playing_client = NowPlayingClient.new
 
+      # Cancel avoiding when station is changed
+      player.register_event :change_station do |id|
+        logger.info "Cancelling avoidance due to station change"
+        @avoiding_timer.cancel if @avoiding_timer
+        @avoided_track = nil
+        @avoiding = false
+      end
+
       # When avoid event fired, stash the current
       # station's Track object and wait until the
       # current playing song is finished
       player.register_event :avoid do |type|
 
         # Only Avoid tracks
-        return unless type == :track
+        return if type != :track
 
         if @avoiding
           logger.info "Already avoiding"
@@ -49,7 +58,7 @@ class TrackAvoider
           player.playlist.tracks = replacement_tracks
           @avoiding = true
 
-          EventMachine.add_timer(time_left_for_track) do
+          @avoiding_timer = EventMachine::Synchrony.add_timer(time_left_for_track) do
             logger.info "Track should be finished, reinstating previous station"
             @player.playlist.tracks = @avoided_track
             @avoiding = false

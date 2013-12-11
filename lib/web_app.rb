@@ -42,8 +42,8 @@ class WebApp < Radiodan::Sinatra
     redirect back
   end
 
-  post '/avoid' do
-    @player.trigger_event :avoid
+  post '/avoid/track' do
+    @player.trigger_event :avoid, :track
     redirect back
   end
 end
