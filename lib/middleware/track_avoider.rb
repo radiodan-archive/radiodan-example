@@ -31,7 +31,14 @@ class TrackAvoider
       # current playing song is finished
       player.register_event :avoid do |type|
         # Only Avoid tracks
-        avoid! unless type != :track
+        begin
+          avoid! unless type != :track
+        rescue
+          logger.error "Error avoiding, stop avoidance"
+          @avoiding_timer.cancel if @avoiding_timer
+          @avoided_track = nil
+          @avoiding = false
+        end
       end
     end
   end
