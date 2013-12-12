@@ -17,6 +17,13 @@ preferences_file_path = './db/prefs.yml'
 
 root = File.join(File.dirname(__FILE__), '..')
 
+# Correctly exit when SIGTERM is received
+%w{INT TERM SIGHUP SIGINT SIGTERM}.each do |signal|
+  Signal.trap(signal) do
+    exit
+  end
+end
+
 avoiding_filename = 'birdsong.mp3'
 
 # Copy avoider track sound into place
