@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'radiodan'
+require 'fileutils'
 
 $: << './lib'
 require 'web_app'
@@ -16,6 +17,13 @@ preferences_file_path = './db/prefs.yml'
 
 root = File.join(File.dirname(__FILE__), '..')
 
+avoiding_filename = 'birdsong.mp3'
+
+# Copy avoider track sound into place
+from_path = File.absolute_path(File.join(root, 'sounds', avoiding_filename))
+to_path   = File.join('/music', avoiding_filename)
+FileUtils.cp(from_path, to_path, :verbose => true) unless File.exists?(to_path)
+
 bbc_stations = RadioStation.list
 
 puts "bbc_stations #{bbc_stations}"
@@ -29,7 +37,7 @@ radio = Radiodan.new do |builder|
   builder.use      :faye_relay, :port => 3000
   builder.use      :radio_controller, :stations => bbc_stations
   builder.use      :preference, :file_path => preferences_file_path, :playlist => RadioController.playlist, :stations => bbc_stations
-  builder.use      :track_avoider, :avoiding_track => Radiodan::Track.new(:file => 'birdsong.mp3')
+  builder.use      :track_avoider, :avoiding_track => Radiodan::Track.new(:file => avoiding_filename)
 end
 
 radio.start
