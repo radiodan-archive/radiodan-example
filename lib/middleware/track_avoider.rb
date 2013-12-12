@@ -70,10 +70,12 @@ class TrackAvoider
       @player.playlist.tracks = replacement_tracks
       @avoiding = true
 
-      @avoiding_timer = EventMachine::Synchrony.add_timer(time_left_for_track) do
-        logger.info "Track should be finished, reinstating previous station"
-        @player.playlist.tracks = @avoided_track
-        @avoiding = false
+      if time_left_for_track > 0
+        @avoiding_timer = EventMachine::Synchrony.add_timer(time_left_for_track) do
+          logger.info "Track should be finished, reinstating previous station"
+          @player.playlist.tracks = @avoided_track
+          @avoiding = false
+        end
       end
     end
   end
