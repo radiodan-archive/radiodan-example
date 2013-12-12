@@ -22,8 +22,11 @@ class TrackAvoider
       player.register_event :change_station do |id|
         logger.info "Cancelling avoidance due to station change"
         @avoiding_timer.cancel if @avoiding_timer
+        logger.info "cancelled @avoiding_timer"
         @avoided_track = nil
+        logger.info "niled @avoided_track"
         @avoiding = false
+        logger.info "falsified @avoiding"
       end
 
       # When avoid event fired, stash the current
