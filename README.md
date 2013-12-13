@@ -57,6 +57,8 @@ A web app is mounted on port 3000, so will be available on an URL such as `http:
 
 Javascript is used to listen and display now playing messages and to change radio stations and volume without relaoding the web page. This uses the Faye. The web app interface is in `lib/views/` and the Javascript and CSS is in `lib/public/`.
 
+![](doc/web-app-screenshot.png)
+
 ### Faye Relay
 
 Converts messages received over the Faye interface into player events understood by the Radio Controller middleware.
