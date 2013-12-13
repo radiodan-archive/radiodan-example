@@ -60,12 +60,18 @@ class LiveTextClient
   def is_new?(message)
     result = false
     previous_messages   = cache_get(message[:station_id])
-    seen_message_before = previous_messages.any? { |m| message[:text] == m[:text] }
+    if(previous_messages)
+      seen_message_before = previous_messages.any? { |m| message[:text] == m[:text] }
+      @logger.debug("\n\nseen before? #{seen_message_before}\n")
 
-    if seen_message_before
-      if previous_messages.length > 7
-        logger.debug("Think we have a new message - programme has changed")
-        result = true
+      if !seen_message_before
+        @logger.debug("\n\nnot seen message\n")
+        if previous_messages.length > 7
+          @logger.debug("Think we have a new message - programme has changed")
+          result = true 
+        else
+          @logger.debug("\n\nprevious_messages.length < 7\n")
+        end
       end
     end
     result
@@ -83,10 +89,10 @@ class LiveTextClient
       @logger.debug("Keeping message #{message}")
       # fire on_message callbacks
       notify(:on_message, message)
-      # store the message in the cache
-      cache_store(message[:station_id], message)
       # if the is_new? is true then fire on_programme_changed callbacks
       notify(:on_programme_changed, message) if is_new?(message)
+      # store the message in the cache
+      cache_store(message[:station_id], message)
     end
   end
 

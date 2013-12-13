@@ -18,12 +18,13 @@ class ProgrammeAvoider
       @live_text_client = LiveTextClient.new
 
       @live_text_client.on_message do |message|
+        logger.debug "Message is...."
         logger.debug message
       end
 
       @player.register_event :on_programme_changed do |id|
 #      @live_text_client.on_programme_changed do 
-         logger.debug "Programme changed"
+         logger.info "Programme changed"
          if @avoiding
            logger.info "Stopping avoiding due to programme change"
            logger.info "Programme should be finished, reinstating previous station"
