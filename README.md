@@ -27,6 +27,8 @@ More detailed instructions coming soon.
 
 ## Physical interface
 
+The physical interface exists in it's [own repository](https://github.com/radiodan/radiodan_example_physical_interface).
+
 ## Structure
 
 The app consists of Radiodan middlewares.
@@ -65,7 +67,7 @@ Converts messages received over the Faye interface into player events understood
 
 ### Now Playing
 
-`NowPlayingClient` class in `lib/now_playing_client.rb` subscribes to now playing updates using the [MQTT prototocl](). Messages received are broadcast using [Faye]() to the web app and other parts of the app.
+`NowPlayingClient` class in `lib/now_playing_client.rb` subscribes to now playing updates using the [MQTT prototocl](http://mqtt.org/). Messages received are broadcast using [Faye](http://faye.jcoglan.com/) to the web app and other parts of the app.
 
 ### Track Avoider
 
