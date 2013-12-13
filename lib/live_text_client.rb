@@ -33,6 +33,7 @@ class LiveTextClient
   # Push a new message into a cache
   def cache_store(key, message)
     @messages[key] = [] if @messages[key].nil?
+    @messages[key].shift if @messages[key].length == 10
     @messages[key] << message
   end
 
@@ -64,9 +65,6 @@ class LiveTextClient
       end
     end
     cache_store(payload[:station_id], payload)
-    if(cache_store(payload[:station_id]).length>10)
-      cache_store(payload[:station_id]).shift
-    end
     result
   end
 
