@@ -32,9 +32,8 @@ class LiveTextClient
   private
   # Push a new message into a cache
   def cache_store(key, message)
-      @messages[key] = [] if @messages[key].nil?
-      @messages[key] << message
-    end
+    @messages[key] = [] if @messages[key].nil?
+    @messages[key] << message
   end
 
   # Get the array of cached messages
