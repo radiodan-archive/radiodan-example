@@ -3,13 +3,30 @@ radiodan_example
 
 Example application using the radiodan gem
 
+Warning
+---
+
+This application is alpha software. We're releasing it to start a discusion about what a radio prototyping platform could be. 
+
+Open an issue if you'd like help getting started.
+
 ## Getting started
 
-- Download and install [Vagrant](http://downloads.vagrantup.com/)
-- `$ vagrant up`
-- Shell into the virtual machine `$ vagrant ssh`
-- Change to the application directory, mounted as `$ cd /vagrant`
-- Install the dependencies for the app `$ bundle install`
-- Start the radio application `$ bin/start`
+To run:
 
-The radio should start playing. You can invoke "panic mode" by creating (or touching) a file named `panic` in the `tmp` directory e.g. `$ touch tmp/panic`. You should hear a different radio station play for 5 seconds.
+    $ foreman start 
+
+More detailed instructions coming soon.
+
+## Features
+
+- Listen to BBC radio stations
+- Web app to control the radio
+- "Avoid track" button to avoid tracks you don't like
+- Physical interface
+
+## Physical interface
+
+## License
+
+See COPYING file.
