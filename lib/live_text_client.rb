@@ -32,8 +32,9 @@ class LiveTextClient
   private
   # Push a new message into a cache
   def cache_store(key, message)
-    @messages[key] = [] if @messages[key].nil?
-    @messages[key] << message
+      @messages[key] = [] if @messages[key].nil?
+      @messages[key] << message
+    end
   end
 
   # Get the array of cached messages
@@ -53,12 +54,36 @@ class LiveTextClient
     }
   end
 
+  # Checks to see if we have seen this message before
+  # If we haven't, we assume it's a new programme being flagged
+  def is_new?(message, payload)
+    result = false
+    if(cache_store(payload[:station_id]).include?(message))
+      if(cache_store(payload[:station_id]).length > 7)
+        @logger.debug("Think we have a new message - programme has changed")
+        result = true
+      end
+    end
+    cache_store(payload[:station_id], payload)
+    if(cache_store(payload[:station_id]).length>10)
+      cache_store(payload[:station_id]).shift
+    end
+    result
+  end
+
   # Parse and store an incoming message, notifying any
   # callbacks registered on the class via on_message
   def handle_incoming_message(message)
     payload = parse(message)
-    cache_store(payload[:station_id], payload)
-    notify(payload)
+    m = message.downcase
+    if(m.include?("now playing") && m.include?("coming next"))
+      @logger.debug("Discarding message #{message}")
+    else
+      @logger.debug("Keeping message #{message}")
+      if(is_new?(message, payload))
+        notify(payload)
+      end
+    end
   end
 
   # Connect to MQTT server and wait for messages

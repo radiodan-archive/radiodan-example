@@ -30,6 +30,16 @@ class ProgrammeAvoider
         @avoiding = false
       end
 
+      # Stop avoiding when programme changes
+      player.register_event :programme_changed do |id|
+        logger.info "Stopping avoiding due to programme change"
+        logger.info "Programme should be finished, reinstating previous station"
+        @player.playlist.tracks = @avoided_track
+        @avoiding = false
+        @avoiding_timer.cancel if @avoiding_timer
+        @avoided_track = nil
+      end
+
       player.register_event :avoid do |type|
         # Only Avoid programmes
         avoid! if type == :programme
@@ -38,7 +48,24 @@ class ProgrammeAvoider
   end
 
   def avoid!
-    logger.debug "Avoid programme?"
+    if @avoiding
+      logger.info "Already avoiding programme"
+    else
+      logger.info "AVOIDING PROGRAMME!"
+
+      @avoided_track = @player.playlist.tracks
+      logger.info "Current playlist.tracks #{@avoided_track}"
+      logger.info "replacement_tracks #{replacement_tracks}"
+
+      now_playing_track = @now_playing_client.now_playing(current_station_id)
+
+      logger.info "current_station_id #{current_station_id}"
+      logger.info "now_playing_track #{now_playing_track}"
+
+      @player.playlist.tracks = replacement_tracks
+      @avoiding = true
+    end
+
   end
 
   # This does a look-up from the BBC-provided stream name
