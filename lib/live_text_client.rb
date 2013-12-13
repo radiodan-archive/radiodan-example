@@ -6,9 +6,10 @@ require 'json'
 class LiveTextClient
 
   def initialize(opts={})
+    @logger    = opts[:logger] || Logger.new(STDOUT)
     @server    = 'test.mosquitto.org'
     @topic     = 'bbc/livetext/#'
-    @callbacks = []
+    @callbacks = { :on_message => [], :on_programme_changed => [] }
     @messages  = {}
     connect!
   end
@@ -22,11 +23,11 @@ class LiveTextClient
   end
 
   def on_message(&block)
-    @callbacks << block
+    @callbacks[:on_message] << block
   end
 
-  def notify(payload={})
-    @callbacks.each { |cb| cb.call(payload) }
+  def notify(message_name, payload={})
+    @callbacks[message_name].each { |cb| cb.call(payload) }
   end
 
   private
@@ -56,30 +57,36 @@ class LiveTextClient
 
   # Checks to see if we have seen this message before
   # If we haven't, we assume it's a new programme being flagged
-  def is_new?(message, payload)
+  def is_new?(message)
     result = false
-    if(cache_store(payload[:station_id]).include?(message))
-      if(cache_store(payload[:station_id]).length > 7)
-        @logger.debug("Think we have a new message - programme has changed")
+    previous_messages   = cache_get(message[:station_id])
+    seen_message_before = previous_messages.any? { |m| message[:text] == m[:text] }
+
+    if seen_message_before
+      if previous_messages.length > 7
+        logger.debug("Think we have a new message - programme has changed")
         result = true
       end
     end
-    cache_store(payload[:station_id], payload)
     result
   end
 
-  # Parse and store an incoming message, notifying any
+  # Parse and store an incoming data, notifying any
   # callbacks registered on the class via on_message
-  def handle_incoming_message(message)
-    payload = parse(message)
-    m = message.downcase
-    if(m.include?("now playing") && m.include?("coming next"))
+  def handle_incoming_message(data)
+    message = parse(data)
+    text = message[:text].downcase
+
+    if text.include?("now playing") || text.include?("coming next")
       @logger.debug("Discarding message #{message}")
     else
       @logger.debug("Keeping message #{message}")
-      if(is_new?(message, payload))
-        notify(payload)
-      end
+      # fire on_message callbacks
+      notify(:on_message, message)
+      # store the message in the cache
+      cache_store(message[:station_id], message)
+      # if the is_new? is true then fire on_programme_changed callbacks
+      notify(:on_programme_changed, message) if is_new?(message)
     end
   end
 

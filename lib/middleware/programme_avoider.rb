@@ -9,7 +9,6 @@ class ProgrammeAvoider
     @options  = config.shift
     @avoiding_track = @options[:avoiding_track]
     @avoiding = false
-    @avoiding_timer = nil
   end
 
   def call(player)
@@ -22,28 +21,28 @@ class ProgrammeAvoider
         logger.debug message
       end
 
-      # Cancel avoiding when station is changed
-      player.register_event :change_station do |id|
-        logger.info "Cancelling avoidance due to station change"
-        @avoiding_timer.cancel if @avoiding_timer
-        @avoided_track = nil
-        @avoiding = false
-      end
+      # @live_text_client.on_programme_changed do
+      #   logger.debug "Programme changed"
+      #   if @avoiding
+      #     logger.info "Stopping avoiding due to programme change"
+      #     logger.info "Programme should be finished, reinstating previous station"
+      #     @player.playlist.tracks = @avoided_track
+      #     @avoiding = false
+      #     @avoided_track = nil
+      #   end
+      # end
 
-      # Stop avoiding when programme changes
-      player.register_event :programme_changed do |id|
-        logger.info "Stopping avoiding due to programme change"
-        logger.info "Programme should be finished, reinstating previous station"
-        @player.playlist.tracks = @avoided_track
-        @avoiding = false
-        @avoiding_timer.cancel if @avoiding_timer
-        @avoided_track = nil
-      end
+      # # Cancel avoiding when station is changed
+      # player.register_event :change_station do |id|
+      #   logger.info "Cancelling avoidance due to station change"
+      #   @avoided_track = nil
+      #   @avoiding = false
+      # end
 
-      player.register_event :avoid do |type|
-        # Only Avoid programmes
-        avoid! if type == :programme
-      end
+      # player.register_event :avoid do |type|
+      #   # Only Avoid programmes
+      #   avoid! if type == :programme
+      # end
     end
   end
 
@@ -68,11 +67,8 @@ class ProgrammeAvoider
 
   end
 
-  # This does a look-up from the BBC-provided stream name
-  # through the BBC Service Map to get an ID key that
-  # matches those provided by the Now Playing service
   def current_station_id
-    BBCRD::ServiceMap.lookup(@player.state.tracks.first.attributes[:Name]).programmes_id
+    @player.playlist.tracks.first[:id]
   end
 
   def replacement_tracks
