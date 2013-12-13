@@ -21,28 +21,30 @@ class ProgrammeAvoider
         logger.debug message
       end
 
-      # @live_text_client.on_programme_changed do
-      #   logger.debug "Programme changed"
-      #   if @avoiding
-      #     logger.info "Stopping avoiding due to programme change"
-      #     logger.info "Programme should be finished, reinstating previous station"
-      #     @player.playlist.tracks = @avoided_track
-      #     @avoiding = false
-      #     @avoided_track = nil
-      #   end
-      # end
+      @player.register_event :on_programme_changed do |id|
+#      @live_text_client.on_programme_changed do 
+         logger.debug "Programme changed"
+         if @avoiding
+           logger.info "Stopping avoiding due to programme change"
+           logger.info "Programme should be finished, reinstating previous station"
+           @player.playlist.tracks = @avoided_track
+           @avoiding = false
+           @avoided_track = nil
+         end
+      end
 
       # # Cancel avoiding when station is changed
-      # player.register_event :change_station do |id|
-      #   logger.info "Cancelling avoidance due to station change"
-      #   @avoided_track = nil
-      #   @avoiding = false
-      # end
+      @player.register_event :change_station do |id|
+         logger.info "Cancelling avoidance due to station change"
+         @avoided_track = nil
+         @avoiding = false
+      end
 
-      # player.register_event :avoid do |type|
-      #   # Only Avoid programmes
-      #   avoid! if type == :programme
-      # end
+       player.register_event :avoid do |type|
+         # Only Avoid programmes
+         logger.info "\n\ntype #{type}"
+         avoid! if type == :programme
+       end
     end
   end
 
@@ -50,16 +52,11 @@ class ProgrammeAvoider
     if @avoiding
       logger.info "Already avoiding programme"
     else
-      logger.info "AVOIDING PROGRAMME!"
+      logger.info "\n\nAVOIDING PROGRAMME!!!!!\n\n"
 
       @avoided_track = @player.playlist.tracks
       logger.info "Current playlist.tracks #{@avoided_track}"
       logger.info "replacement_tracks #{replacement_tracks}"
-
-      now_playing_track = @now_playing_client.now_playing(current_station_id)
-
-      logger.info "current_station_id #{current_station_id}"
-      logger.info "now_playing_track #{now_playing_track}"
 
       @player.playlist.tracks = replacement_tracks
       @avoiding = true
