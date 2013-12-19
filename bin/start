@@ -30,6 +30,7 @@ avoiding_filename = 'birdsong.mp3'
 from_path = File.absolute_path(File.join(root, 'sounds', avoiding_filename))
 to_path   = File.join('/music', avoiding_filename)
 FileUtils.cp(from_path, to_path, :verbose => true) unless File.exists?(to_path)
+FileUtils.chmod(0777, to_path)
 
 bbc_stations = RadioStation.list
 
