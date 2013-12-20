@@ -9,7 +9,6 @@ class LiveTextClient
     @logger    = opts[:logger] || Logger.new(STDOUT)
     @server    = 'test.mosquitto.org'
     @topic     = 'bbc/livetext/#'
-#    @topic     = 'bbc/livetext/radio4extra'
     @callbacks = { :on_message => [], :on_programme_changed => [] }
     @messages  = {}
     connect!
@@ -32,9 +31,7 @@ class LiveTextClient
   end
 
   def notify(message_name, payload={})
-    @logger.debug("\n\nNOTIFING #{message_name} #{payload}")
     @callbacks[message_name].each { |cb| 
-      @logger.debug("\ncallback is #{cb}")
       cb.call(payload) 
     }
   end
@@ -71,16 +68,14 @@ class LiveTextClient
     previous_messages   = cache_get(message[:station_id])
     if(previous_messages)
       seen_message_before = previous_messages.any? { |m| message[:text] == m[:text] }
-      @logger.debug("\n\nseen before? #{seen_message_before}\n")
 
       if !seen_message_before
-        @logger.debug("\n\nnot seen message\n")
         if previous_messages.length > 7
-          @logger.debug("Think we have a new message - programme has changed for #{:station_id}")
+          @logger.debug("New message - programme has changed for #{:station_id}")
           @logger.debug(previous_messages)
           result = true 
         else
-          @logger.debug("\n\nprevious_messages.length < 7\n")
+          @logger.debug("Previous_messages.length < 7")
         end
       end
     end
