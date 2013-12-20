@@ -13,6 +13,9 @@ class ProgrammeAvoider
 
   def call(player)
     @player = player
+    require 'pp'
+    pp @player.playlist.tracks
+    logger.debug "\n\nSTATIOn is #{@player.playlist.tracks.first[:id]}\n\n"
 
     EM.run do
       @live_text_client = LiveTextClient.new
@@ -22,21 +25,31 @@ class ProgrammeAvoider
         logger.debug message
       end
 
-      @player.register_event :on_programme_changed do |id|
-#      @live_text_client.on_programme_changed do 
-         logger.info "Programme changed"
-         if @avoiding
-           logger.info "Stopping avoiding due to programme change"
-           logger.info "Programme should be finished, reinstating previous station"
-           @player.playlist.tracks = @avoided_track
-           @avoiding = false
-           @avoided_track = nil
+#      @player.register_event :on_programme_changed do |id|
+      @live_text_client.on_programme_changed do |message|
+        if(@avoided_track)
+         if(message[:station_id] == @avoided_track.first[:id])
+           logger.info "\n\n!!!!!Programme changed"
+           if @avoiding
+             logger.info "Stopping avoiding due to programme change"
+             logger.info "Programme should be finished, reinstating previous station"
+             @player.playlist.tracks = @avoided_track
+             @player.playlist.repeat = false
+             @avoiding = false
+             @avoided_track = nil
+           end
+         else
+           logger.info "Got programme change for #{message[:station_id]} but curent station is #{@player.playlist.tracks.first[:id]}"
          end
+       else
+         logger.info "Got programme change for #{message[:station_id]} but not avoiding"
+       end
       end
 
       # # Cancel avoiding when station is changed
       @player.register_event :change_station do |id|
          logger.info "Cancelling avoidance due to station change"
+         @player.playlist.repeat = false
          @avoided_track = nil
          @avoiding = false
       end
@@ -53,13 +66,14 @@ class ProgrammeAvoider
     if @avoiding
       logger.info "Already avoiding programme"
     else
-      logger.info "\n\nAVOIDING PROGRAMME!!!!!\n\n"
+      logger.info "\n\nAVOIDING PROGRAMME!!on #{@player.playlist.tracks.first[:id]}!!!\n\n"
 
       @avoided_track = @player.playlist.tracks
       logger.info "Current playlist.tracks #{@avoided_track}"
       logger.info "replacement_tracks #{replacement_tracks}"
 
       @player.playlist.tracks = replacement_tracks
+      @player.playlist.repeat = true
       @avoiding = true
     end
 
