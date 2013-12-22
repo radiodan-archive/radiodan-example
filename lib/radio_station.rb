@@ -23,7 +23,7 @@ class RadioStation
   def self.list
     STATIONS.map do |id,props|
       if id == :'ws'
-        RadioStation.new(id.to_s, props[:bbc_id], props[:title], "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk")
+        RadioStation.new(id.to_s, props[:bbc_id], props[:title], "http://www.bbc.co.uk/worldservice/meta/live/mp3/eneuk.pls")
       else
         RadioStation.new(id.to_s, props[:bbc_id], props[:title])
       end
@@ -65,6 +65,9 @@ class RadioStation
     date = nil
     end_time_secs = stream_url.match(/e=([\d]*)/)
     date = DateTime.strptime(end_time_secs[1],'%s') if end_time_secs && end_time_secs.length > 0
+    if(!date)
+       date = DateTime.now + 1
+    end
     date
   end
 
