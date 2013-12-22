@@ -62,13 +62,17 @@ class RadioStation
   end
 
   def expires
-    date = nil
     end_time_secs = stream_url.match(/e=([\d]*)/)
-    date = DateTime.strptime(end_time_secs[1],'%s') if end_time_secs && end_time_secs.length > 0
-    if(!date)
-       date = DateTime.now + 1
+    if end_time_secs && end_time_secs.length > 0
+      DateTime.strptime(end_time_secs[1],'%s')
+    else
+      default_expiry_time
     end
-    date
+  end
+
+  # Return a date 1 day ahead
+  def default_expiry_time
+    DateTime.now + 1
   end
 
   def pls_url
